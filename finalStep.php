@@ -1,42 +1,45 @@
 <?php
-include("finalStepHeader.html");
+// Start the session
+session_start();
 
-//translate the comments below into PHP code underneath each comment
+// Set the timezone (replace 'America/New_York' with your correct timezone)
+date_default_timezone_set('America/New_York');
 
-//start a session
+// Include database connection file
+include("dbcon.php");
 
-//echo the passenger's firstname from the appropriate session variable
+// Ensure required session variables are set
+if (!isset($_SESSION['passengerFN']) || !isset($_SESSION['passengerSN'])) {
+    echo "<h4>Error: Missing passenger information. Please restart the booking process.</h4>";
+    exit();
+}
 
-echo "<BR>";
+// Display passenger details
+echo "<h4>Passenger's Firstname: " . htmlspecialchars($_SESSION['passengerFN']) . "</h4>";
+echo "<h4>Passenger's Surname: " . htmlspecialchars($_SESSION['passengerSN']) . "</h4>";
 
-//echo the passenger's surname from the appropriate session variable
-
-echo "<BR>";
-
-// if the luggage session variable is on
-
-    //echo the amount of bags under ten kilos the passenger is bringing
+// Check if luggage information is available
+if (isset($_SESSION['luggage']) && $_SESSION['luggage'] == 1) {
+    // Using isset() to avoid undefined index errors for session variables
+    $subTenKG = isset($_SESSION['subTenKG']) ? $_SESSION['subTenKG'] : 0;
+    $overTenKG = isset($_SESSION['overTenKG']) ? $_SESSION['overTenKG'] : 0;
     
-    echo "<BR>";
-    
-    //echo the amount of bags over ten kilos the passenger is bringing
-    
-//end if block
-
+    echo "<h4>Bags under 10 kilos: " . htmlspecialchars($subTenKG) . "</h4>";
+    echo "<h4>Bags between 10 and 20 kilos: " . htmlspecialchars($overTenKG) . "</h4>";
+} else {
+    echo "<h4>No luggage details provided.</h4>";
+}
 ?>
-</h4></div></div>
+
+<!-- Confirmation Form -->
 <form method="POST" action="confirm.php">
     <div class="form-group">        
         <label class="control-label col-sm-12 text-center">Is the above information correct?</label>
         <div class="checkbox col-sm-12 text-center">
-          <label><input type="checkbox" name="confirm">Yes</input>
+          <label><input type="checkbox" name="confirm" required> Yes</label>
         </div>
     </div>
-   
-        
-      <div class="col-sm-12 text-center">
+    <div class="col-sm-12 text-center">
         <button type="submit" class="btn btn-default">Continue</button>
-      </div>
     </div>
-    
 </form>
